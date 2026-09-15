@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instamart Lite</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+    body { background-color: #f4f5f7; color: #333; padding-bottom: 80px; }
+    
+    /* Header */
+    header { background: #e23744; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    header h1 { font-size: 1.4rem; font-weight: 800; }
+    
+    /* Location Selector */
+    .store-bar { background: white; padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #ddd; }
+    .store-bar select { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.9rem; outline: none; }
+    
+    /* Main Layout */
+    .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 200px 1fr 320px; gap: 20px; }
+    
+    /* Categories Sidebar */
+    .categories { background: white; border-radius: 8px; padding: 10px; height: fit-content; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .categories h3 { font-size: 1rem; margin-bottom: 10px; padding: 5px; color: #666; }
+    .category-btn { display: block; width: 100%; text-align: left; padding: 8px 10px; margin-bottom: 4px; border: none; background: transparent; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    .category-btn.active, .category-btn:hover { background: #ffebee; color: #e23744; font-weight: bold; }
+    
+    /* Product Grid */
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+    .product-card { background: white; border-radius: 8px; border: 1px solid #eee; padding: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+    .product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .product-card img { width: 80px; height: 80px; object-fit: contain; margin: 0 auto 10px; }
+    .product-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; height: 32px; overflow: hidden; }
+    .product-price { font-size: 0.9rem; font-weight: 700; color: #111; margin-bottom: 10px; }
+    .add-btn { background: white; color: #60b246; border: 1px solid #60b246; padding: 6px 0; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+    .add-btn:hover { background: #60b246; color: white; }
+
+    /* Cart Drawer / Sidebar */
+    .cart-sidebar { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); height: fit-content; }
+    .cart-sidebar h2 { font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+    .cart-items { max-height: 250px; overflow-y: auto; margin-bottom: 15px; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.85rem; }
+    .cart-controls { display: flex; align-items: center; gap: 6px; }
+    .cart-controls button { width: 22px; height: 22px; border: 1px solid #ccc; background: #f9f9f9; border-radius: 4px; cursor: pointer; }
+    
+    .checkout-section { border-top: 1px dashed #ccc; padding-top: 10px; }
+    .cart-total { display: flex; justify-content: space-between; font-weight: bold; font-size: 1rem; margin-bottom: 15px; }
+    
+    .payment-options { margin-bottom: 15px; }
+    .payment-options label { display: block; font-size: 0.85rem; margin-top: 5px; cursor: pointer; }
+    
+    .checkout-btn { background: #60b246; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+      .categories { display: flex; overflow-x: auto; gap: 5px; white-space: nowrap; }
+      .category-btn { display: inline-block; width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Instamart Lite</h1>
+    <div id="header-cart-summary">🛒 Items: <span id="header-count">0</span></div>
+  </header>
+
+  <div class="store-bar">
+    <label for="pincode-select">📍 Select Delivery Pincode: </label>
+    <select id="pincode-select" onchange="changeStore()">
+      <!-- Populated via JS -->
+    </select>
+    <span id="store-name" style="font-weight: bold; color: #555; margin-left: 10px;"></span>
+  </div>
+
+  <div class="container">
+    <!-- Category Filter -->
+    <div class="categories">
+      <h3>Categories</h3>
+      <div id="category-list"></div>
+    </div>
+
+    <!-- Product Display -->
+    <main>
+      <div class="products-grid" id="product-grid"></div>
+    </main>
+
+    <!-- Cart & Payment Sidebar -->
+    <aside class="cart-sidebar">
+      <h2>Your Basket</h2>
+      <div id="cart-items" class="cart-items">
+        <p style="color: #888; font-size: 0.9rem;">Your cart is empty.</p>
+      </div>
+      
+      <div class="checkout-section">
+        <div class="cart-total">
+          <span>Total:</span>
+          <span>₹<span id="cart-total-price">0</span></span>
+        </div>
+
+        <div class="payment-options">
+          <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 5px;">Payment Mode:</p>
+          <label><input type="radio" name="payment" value="UPI" checked /> UPI / GPay</label>
+          <label><input type="radio" name="payment" value="Card" /> Credit / Debit Card</label>
+          <label><input type="radio" name="payment" value="Cash" /> Cash on Delivery</label>
+        </div>
+
+        <button id="checkout-btn" class="checkout-btn" onclick="placeOrder()" disabled>Place Order</button>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // 1. Data Definitions (5 Stores mapped to Pincodes)
+    const STORES = [
+      { id: 1, name: "Instamart Darkstore - Indiranagar", pincode: "560038" },
+      { id: 2, name: "Instamart Darkstore - Koramangala", pincode: "560034" },
+      { id: 3, name: "Instamart Darkstore - Whitefield", pincode: "560066" },
+      { id: 4, name: "Instamart Darkstore - HSR Layout", pincode: "560102" },
+      { id: 5, name: "Instamart Darkstore - Jayanagar", pincode: "560041" }
+    ];
+
+    const CATEGORIES = ["All", "Fruits & Veggies", "Dairy & Bread", "Snacks & Munchies", "Beverages", "Instant Food"];
+
+    // 2. Programmatically generate 100 Sample Items across categories
+    const PRODUCTS = [];
+    const baseNames = {
+      "Fruits & Veggies": ["Apple", "Banana", "Tomato", "Potato", "Onion", "Spinach", "Mango", "Orange", "Cucumber", "Carrot"],
+      "Dairy & Bread": ["Milk 500ml", "Brown Bread", "Butter 100g", "Paneer 200g", "Curd 400g", "Cheese Slices", "Eggs 6 pack", "Cream 200ml", "Yogurt", "Ghee 500ml"],
+      "Snacks & Munchies": ["Potato Chips", "Nachos", "Salted Peanuts", "Popcorn", "Biscuits", "Dark Chocolate", " नमकीन", "Extruded Snacks", "Rusk", "Wafer Rolls"],
+      "Beverages": ["Cola 750ml", "Orange Juice 1L", "Energy Drink", "Cold Coffee", "Iced Tea", "Sparkling Water", "Soda", "Lemonade", "Mango Drink", "Coconut Water"],
+      "Instant Food": ["Instant Noodles", "Oats 500g", "Pasta 500g", "Ready Soup", "Upma Mix", "Poha Pack", "Instant Upma", "Frozen Fries", "Frozen Momos", "Pancake Mix"]
+    };
+
+    let idCounter = 1;
+    Object.keys(baseNames).forEach(category => {
+      baseNames[category].forEach(itemName => {
+        // Create variations to hit 100 total items
+        for (let i = 1; i <= 2; i++) {
+          const price = Math.floor(Math.random() * 150) + 20; // Price between 20 and 170
+          PRODUCTS.push({
+            id: idCounter++,
+            name: `${itemName} ${i > 1 ? 'Variant ' + i : ''}`,
+            category: category,
+            price: price,
+            image: `https://via.placeholder.com/80/f0f0f0/333333?text=${encodeURIComponent(itemName.split(' ')[0])}`
+          });
+        }
+      });
+    });
+
+    // Application State
+    let currentStore = STORES[0];
+    let selectedCategory = "All";
+    let cart = {}; // { productId: quantity }
+
+    // Initialize UI
+    window.onload = () => {
+      initStoreDropdown();
+      renderCategories();
+      renderProducts();
+    };
+
+    function initStoreDropdown() {
+      const select = document.getElementById("pincode-select");
+      STORES.forEach(store => {
+        const option = document.createElement("option");
+        option.value = store.id;
+        option.innerText = `${store.pincode} (${store.name.split('-')[1].trim()})`;
+        select.appendChild(option);
+      });
+      updateStoreHeader();
+    }
+
+    function changeStore() {
+      const selectedId = parseInt(document.getElementById("pincode-select").value);
+      currentStore = STORES.find(s => s.id === selectedId);
+      updateStoreHeader();
+      // Clear cart on store switch to simulate inventory availability
+      cart = {};
+      updateCartUI();
+      alert(`Switched to location: ${currentStore.name}. Cart has been reset.`);
+    }
+
+    function updateStoreHeader() {
+      document.getElementById("store-name").innerText = `Serving from: ${currentStore.name}`;
+    }
+
+    function renderCategories() {
+      const catContainer = document.getElementById("category-list");
+      catContainer.innerHTML = CATEGORIES.map(cat => `
+        <button class="category-btn ${cat === selectedCategory ? 'active' : ''}" 
+                onclick="filterCategory('${cat}')">${cat}</button>
+      `).join('');
+    }
+
+    function filterCategory(cat) {
+      selectedCategory = cat;
+      renderCategories();
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("product-grid");
+      const filtered = selectedCategory === "All" 
+        ? PRODUCTS 
+        : PRODUCTS.filter(p => p.category === selectedCategory);
+
+      grid.innerHTML = filtered.map(product => `
+        <div class="product-card">
+          <img src="${product.image}" alt="${product.name}">
+          <div class="product-title">${product.name}</div>
+          <div class="product-price">₹${product.price}</div>
+          <button class="add-btn" onclick="addToCart(${product.id})">ADD</button>
+        </div>
+      `).join('');
+    }
+
+    // Cart Handlers
+    function addToCart(productId) {
+      cart[productId] = (cart[productId] || 0) + 1;
+      updateCartUI();
+    }
+
+    function updateQuantity(productId, delta) {
+      if (cart[productId]) {
+        cart[productId] += delta;
+        if (cart[productId] <= 0) {
+          delete cart[productId];
+        }
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const cartItemsContainer = document.getElementById("cart-items");
+      const totalCountEl = document.getElementById("header-count");
+      const totalPriceEl = document.getElementById("cart-total-price");
+      const checkoutBtn = document.getElementById("checkout-btn");
+
+      const itemIds = Object.keys(cart);
+      let totalCount = 0;
+      let totalPrice = 0;
+
+      if (itemIds.length === 0) {
+        cartItemsContainer.innerHTML = `<p style="color: #888; font-size: 0.9rem;">Your cart is empty.</p>`;
+        checkoutBtn.disabled = true;
+      } else {
+        cartItemsContainer.innerHTML = itemIds.map(id => {
+          const product = PRODUCTS.find(p => p.id === parseInt(id));
+          const qty = cart[id];
+          const itemTotal = product.price * qty;
+          totalCount += qty;
+          totalPrice += itemTotal;
+
+          return `
+            <div class="cart-item">
+              <div>
+                <div>${product.name}</div>
+                <small style="color:#666">₹${product.price} x ${qty}</small>
+              </div>
+              <div class="cart-controls">
+                <button onclick="updateQuantity(${product.id}, -1)">-</button>
+                <span>${qty}</span>
+                <button onclick="updateQuantity(${product.id}, 1)">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        checkoutBtn.disabled = false;
+      }
+
+      totalCountEl.innerText = totalCount;
+      totalPriceEl.innerText = totalPrice;
+    }
+
+    function placeOrder() {
+      const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+      const total = document.getElementById("cart-total-price").innerText;
+
+      alert(`🎉 Order Placed Successfully!\n\nStore: ${currentStore.name}\nTotal Amount: ₹${total}\nPayment Method: ${selectedPayment}\n\nYour delivery will arrive in 10 minutes!`);
+      
+      // Reset Cart
+      cart = {};
+      updateCartUI();
+    }
+  </script>
+</body>
+</html>
