@@ -3,58 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instamart Lite</title>
+  <title>Mumbai Local Express - Hyperlocal Grocery & Bites</title>
   <style>
     * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
-    body { background-color: #f4f5f7; color: #333; padding-bottom: 80px; }
+    body { background-color: #f4f5f7; color: #333; padding-bottom: 60px; }
     
     /* Header */
-    header { background: #e23744; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    header h1 { font-size: 1.4rem; font-weight: 800; }
-    
-    /* Location Selector */
-    .store-bar { background: white; padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #ddd; }
-    .store-bar select { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.9rem; outline: none; }
-    
-    /* Main Layout */
-    .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 200px 1fr 320px; gap: 20px; }
+    header { background: #d32f2f; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    header h1 { font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .header-actions { display: flex; align-items: center; gap: 15px; }
+    .nav-btn { background: #b71c1c; border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+    .nav-btn:hover { background: #9a0007; }
+
+    /* Top Bar for User & Location */
+    .top-bar { background: #fff; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #e0e0e0; font-size: 0.85rem; }
+    .location-picker, .user-picker { display: flex; align-items: center; gap: 8px; }
+    select { padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.85rem; outline: none; background: #fafafa; }
+
+    /* Layout Views */
+    .view-container { max-width: 1150px; margin: 20px auto; padding: 0 15px; }
+    .hidden { display: none !important; }
+
+    /* Shop Grid Layout */
+    .shop-layout { display: grid; grid-template-columns: 200px 1fr 320px; gap: 20px; }
     
     /* Categories Sidebar */
-    .categories { background: white; border-radius: 8px; padding: 10px; height: fit-content; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-    .categories h3 { font-size: 1rem; margin-bottom: 10px; padding: 5px; color: #666; }
-    .category-btn { display: block; width: 100%; text-align: left; padding: 8px 10px; margin-bottom: 4px; border: none; background: transparent; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-    .category-btn.active, .category-btn:hover { background: #ffebee; color: #e23744; font-weight: bold; }
+    .categories { background: white; border-radius: 8px; padding: 12px; height: fit-content; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .categories h3 { font-size: 0.95rem; margin-bottom: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+    .category-btn { display: block; width: 100%; text-align: left; padding: 8px 10px; margin-bottom: 4px; border: none; background: transparent; border-radius: 6px; cursor: pointer; font-size: 0.88rem; transition: background 0.2s; }
+    .category-btn.active, .category-btn:hover { background: #ffebee; color: #d32f2f; font-weight: bold; }
     
     /* Product Grid */
-    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-    .product-card { background: white; border-radius: 8px; border: 1px solid #eee; padding: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
-    .product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .product-card img { width: 80px; height: 80px; object-fit: contain; margin: 0 auto 10px; }
-    .product-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; height: 32px; overflow: hidden; }
-    .product-price { font-size: 0.9rem; font-weight: 700; color: #111; margin-bottom: 10px; }
-    .add-btn { background: white; color: #60b246; border: 1px solid #60b246; padding: 6px 0; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
-    .add-btn:hover { background: #60b246; color: white; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 15px; }
+    .product-card { background: white; border-radius: 8px; border: 1px solid #eee; padding: 12px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .product-card img { width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
+    .product-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; height: 34px; overflow: hidden; color: #222; }
+    .product-price { font-size: 0.95rem; font-weight: 700; color: #111; margin-bottom: 10px; }
+    .add-btn { background: white; color: #388e3c; border: 1.5px solid #388e3c; padding: 6px 0; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
+    .add-btn:hover { background: #388e3c; color: white; }
 
-    /* Cart Drawer / Sidebar */
+    /* Cart Sidebar */
     .cart-sidebar { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); height: fit-content; }
-    .cart-sidebar h2 { font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-    .cart-items { max-height: 250px; overflow-y: auto; margin-bottom: 15px; }
-    .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.85rem; }
+    .cart-sidebar h2 { font-size: 1.05rem; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+    .cart-items { max-height: 260px; overflow-y: auto; margin-bottom: 15px; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.85rem; border-bottom: 1px dashed #f0f0f0; padding-bottom: 8px; }
     .cart-controls { display: flex; align-items: center; gap: 6px; }
-    .cart-controls button { width: 22px; height: 22px; border: 1px solid #ccc; background: #f9f9f9; border-radius: 4px; cursor: pointer; }
+    .cart-controls button { width: 22px; height: 22px; border: 1px solid #ccc; background: #f9f9f9; border-radius: 4px; cursor: pointer; font-weight: bold; }
     
-    .checkout-section { border-top: 1px dashed #ccc; padding-top: 10px; }
-    .cart-total { display: flex; justify-content: space-between; font-weight: bold; font-size: 1rem; margin-bottom: 15px; }
-    
+    .checkout-section { border-top: 1px solid #eee; padding-top: 10px; }
+    .cart-total { display: flex; justify-content: space-between; font-weight: bold; font-size: 1rem; margin-bottom: 12px; }
     .payment-options { margin-bottom: 15px; }
-    .payment-options label { display: block; font-size: 0.85rem; margin-top: 5px; cursor: pointer; }
-    
-    .checkout-btn { background: #60b246; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .payment-options label { display: block; font-size: 0.82rem; margin-top: 5px; cursor: pointer; }
+    .checkout-btn { background: #388e3c; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
     .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .container { grid-template-columns: 1fr; }
+    /* Dynamic Pages: Orders View & Confirmation View */
+    .page-card { background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+    .order-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #fafafa; }
+    .order-header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; font-weight: bold; font-size: 0.9rem; }
+    .order-status { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .order-item-line { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; color: #555; }
+    .success-banner { text-align: center; color: #2e7d32; margin-bottom: 20px; }
+    .success-banner h2 { font-size: 1.6rem; margin-bottom: 5px; }
+
+    /* Responsive */
+    @media (max-width: 850px) {
+      .shop-layout { grid-template-columns: 1fr; }
       .categories { display: flex; overflow-x: auto; gap: 5px; white-space: nowrap; }
       .category-btn { display: inline-block; width: auto; }
     }
@@ -62,130 +77,249 @@
 </head>
 <body>
 
+  <!-- App Header -->
   <header>
-    <h1>Instamart Lite</h1>
-    <div id="header-cart-summary">🛒 Items: <span id="header-count">0</span></div>
+    <h1>🚂 Mumbai Local Express</h1>
+    <div class="header-actions">
+      <button class="nav-btn" onclick="showView('shop')">🛒 Store</button>
+      <button class="nav-btn" onclick="showView('orders')">📦 My Orders (<span id="user-order-count">0</span>)</button>
+    </div>
   </header>
 
-  <div class="store-bar">
-    <label for="pincode-select">📍 Select Delivery Pincode: </label>
-    <select id="pincode-select" onchange="changeStore()">
-      <!-- Populated via JS -->
-    </select>
-    <span id="store-name" style="font-weight: bold; color: #555; margin-left: 10px;"></span>
-  </div>
-
-  <div class="container">
-    <!-- Category Filter -->
-    <div class="categories">
-      <h3>Categories</h3>
-      <div id="category-list"></div>
+  <!-- Location & User Selector Bar -->
+  <div class="top-bar">
+    <div class="user-picker">
+      <label for="user-select">👤 <strong>Logged In As:</strong> </label>
+      <select id="user-select" onchange="switchUser()">
+        <!-- Populated via JS -->
+      </select>
     </div>
 
-    <!-- Product Display -->
-    <main>
-      <div class="products-grid" id="product-grid"></div>
-    </main>
+    <div class="location-picker">
+      <label for="pincode-select">📍 <strong>Assigned Delivery Hub:</strong> </label>
+      <select id="pincode-select" onchange="changeStore()">
+        <!-- Populated via JS -->
+      </select>
+    </div>
+  </div>
 
-    <!-- Cart & Payment Sidebar -->
-    <aside class="cart-sidebar">
-      <h2>Your Basket</h2>
-      <div id="cart-items" class="cart-items">
-        <p style="color: #888; font-size: 0.9rem;">Your cart is empty.</p>
+  <div class="view-container">
+    
+    <!-- 1. SHOP VIEW -->
+    <div id="shop-view" class="shop-layout">
+      <!-- Categories Sidebar -->
+      <div class="categories">
+        <h3>Categories</h3>
+        <div id="category-list"></div>
       </div>
-      
-      <div class="checkout-section">
-        <div class="cart-total">
-          <span>Total:</span>
-          <span>₹<span id="cart-total-price">0</span></span>
-        </div>
 
-        <div class="payment-options">
-          <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 5px;">Payment Mode:</p>
-          <label><input type="radio" name="payment" value="UPI" checked /> UPI / GPay</label>
-          <label><input type="radio" name="payment" value="Card" /> Credit / Debit Card</label>
-          <label><input type="radio" name="payment" value="Cash" /> Cash on Delivery</label>
-        </div>
+      <!-- Products Grid -->
+      <main>
+        <div class="products-grid" id="product-grid"></div>
+      </main>
 
-        <button id="checkout-btn" class="checkout-btn" onclick="placeOrder()" disabled>Place Order</button>
+      <!-- Cart Sidebar -->
+      <aside class="cart-sidebar">
+        <h2>Your Express Basket</h2>
+        <div id="cart-items" class="cart-items">
+          <p style="color: #888; font-size: 0.85rem;">Your basket is empty.</p>
+        </div>
+        
+        <div class="checkout-section">
+          <div class="cart-total">
+            <span>Total:</span>
+            <span>₹<span id="cart-total-price">0</span></span>
+          </div>
+
+          <div class="payment-options">
+            <p style="font-size: 0.82rem; font-weight: bold; margin-bottom: 5px;">Payment Option:</p>
+            <label><input type="radio" name="payment" value="UPI (GPay/PhonePe)" checked /> UPI / QR Scan</label>
+            <label><input type="radio" name="payment" value="Credit/Debit Card" /> Credit / Debit Card</label>
+            <label><input type="radio" name="payment" value="Cash on Delivery" /> Cash on Delivery</label>
+          </div>
+
+          <button id="checkout-btn" class="checkout-btn" onclick="placeOrder()" disabled>Place Express Order</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 2. ORDER CONFIRMATION VIEW -->
+    <div id="confirmation-view" class="page-card hidden">
+      <div class="success-banner">
+        <h2>🎉 Order Placed Successfully!</h2>
+        <p>Your local express rider is assigned and on the way!</p>
       </div>
-    </aside>
+      <div id="latest-order-details" style="max-width: 500px; margin: 0 auto;"></div>
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="add-btn" style="width: auto; padding: 10px 20px;" onclick="showView('orders')">View All My Orders</button>
+        <button class="add-btn" style="width: auto; padding: 10px 20px; background: #d32f2f; color: white; border: none;" onclick="showView('shop')">Continue Shopping</button>
+      </div>
+    </div>
+
+    <!-- 3. USER ORDERS LIST VIEW -->
+    <div id="orders-view" class="page-card hidden">
+      <h2 style="margin-bottom: 15px;" id="orders-title">My Order History</h2>
+      <div id="orders-list"></div>
+    </div>
+
   </div>
 
   <script>
-    // 1. Data Definitions (5 Stores mapped to Pincodes)
+    // 1. Mumbai Darkstores & Pincodes
     const STORES = [
-      { id: 1, name: "Instamart Darkstore - Indiranagar", pincode: "560038" },
-      { id: 2, name: "Instamart Darkstore - Koramangala", pincode: "560034" },
-      { id: 3, name: "Instamart Darkstore - Whitefield", pincode: "560066" },
-      { id: 4, name: "Instamart Darkstore - HSR Layout", pincode: "560102" },
-      { id: 5, name: "Instamart Darkstore - Jayanagar", pincode: "560041" }
+      { id: 1, name: "Andheri East Express Hub", pincode: "400069", locality: "Andheri East" },
+      { id: 2, name: "Andheri West Lokhandwala Hub", pincode: "400053", locality: "Andheri West" },
+      { id: 3, name: "Vile Parle West & Juhu Hub", pincode: "400056", locality: "Vile Parle West" },
+      
     ];
 
-    const CATEGORIES = ["All", "Fruits & Veggies", "Dairy & Bread", "Snacks & Munchies", "Beverages", "Instant Food"];
+    // 2. Sample Users mapped with specific store Locations
+    const SAMPLE_USERS = [
+      { id: "usr_1", name: "Kavya Kaskar", phone: "+91 98200 12345", storeId: 2, location: "Andheri West" },
+      { id: "usr_2", name: "Nevedya Dandekar", phone: "+91 98199 67890", storeId: 3, location: "Vile Parle West" }      
+    ];
 
-    // 2. Programmatically generate 100 Sample Items across categories
-    const PRODUCTS = [];
-    const baseNames = {
-      "Fruits & Veggies": ["Apple", "Banana", "Tomato", "Potato", "Onion", "Spinach", "Mango", "Orange", "Cucumber", "Carrot"],
-      "Dairy & Bread": ["Milk 500ml", "Brown Bread", "Butter 100g", "Paneer 200g", "Curd 400g", "Cheese Slices", "Eggs 6 pack", "Cream 200ml", "Yogurt", "Ghee 500ml"],
-      "Snacks & Munchies": ["Potato Chips", "Nachos", "Salted Peanuts", "Popcorn", "Biscuits", "Dark Chocolate", " नमकीन", "Extruded Snacks", "Rusk", "Wafer Rolls"],
-      "Beverages": ["Cola 750ml", "Orange Juice 1L", "Energy Drink", "Cold Coffee", "Iced Tea", "Sparkling Water", "Soda", "Lemonade", "Mango Drink", "Coconut Water"],
-      "Instant Food": ["Instant Noodles", "Oats 500g", "Pasta 500g", "Ready Soup", "Upma Mix", "Poha Pack", "Instant Upma", "Frozen Fries", "Frozen Momos", "Pancake Mix"]
-    };
+    const CATEGORIES = ["All", "Fresh Vegetables", "Food Grains"];
 
-    let idCounter = 1;
-    Object.keys(baseNames).forEach(category => {
-      baseNames[category].forEach(itemName => {
-        // Create variations to hit 100 total items
-        for (let i = 1; i <= 2; i++) {
-          const price = Math.floor(Math.random() * 150) + 20; // Price between 20 and 170
-          PRODUCTS.push({
-            id: idCounter++,
-            name: `${itemName} ${i > 1 ? 'Variant ' + i : ''}`,
-            category: category,
-            price: price,
-            image: `https://via.placeholder.com/80/f0f0f0/333333?text=${encodeURIComponent(itemName.split(' ')[0])}`
-          });
-        }
-      });
-    });
+    // 3. Complete Updated Product Inventory 
+	
+	
 
-    // Application State
-    let currentStore = STORES[0];
+
+const imageBase = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+
+const PRODUCTS = [
+  { id: 101, name: "Tomato 1kg", category: "Fresh Vegetables", price: 40, image: imageBase + "Tomato.jpg" },
+  { id: 102, name: "Carrot 500g", category: "Fresh Vegetables", price: 40, image: imageBase + "Carrot.jpg" },
+  { id: 103, name: "Potato 1kg", category: "Fresh Vegetables", price: 35, image: imageBase + "Potato.jpg" },
+  { id: 104, name: "Onion 1kg", category: "Fresh Vegetables", price: 45, image: imageBase + "Onion.jpg" },
+  { id: 105, name: "Cabbage 1 pc", category: "Fresh Vegetables", price: 30, image: imageBase + "Cabbage.jpg" },
+  { id: 106, name: "Cauliflower 1 pc", category: "Fresh Vegetables", price: 45, image: imageBase + "Cauliflower.jpg" },
+  { id: 107, name: "Coriander (Kothmir) Bunch", category: "Fresh Vegetables", price: 20, image: imageBase + "Coriander_leaves.jpg" },
+  { id: 108, name: "Spinach (Palak) Bunch", category: "Fresh Vegetables", price: 25, image: imageBase + "Spinach.jpg" },
+  { id: 109, name: "Methi (Fenugreek) Bunch", category: "Fresh Vegetables", price: 25, image: imageBase + "Fenugreek.jpg" },
+  { id: 110, name: "Green Chilly 250g", category: "Fresh Vegetables", price: 20, image: imageBase + "Green_chili_peppers.jpg" },
+  { id: 111, name: "Lemon 250g", category: "Fresh Vegetables", price: 30, image: imageBase + "Lemon.jpg" },
+  { id: 112, name: "Curry Leaves Pack", category: "Fresh Vegetables", price: 15, image: imageBase + "Curry_leaves.jpg" },
+  { id: 113, name: "Brinjal (Eggplant) 500g", category: "Fresh Vegetables", price: 35, image: imageBase + "Eggplant.jpg" },
+  { id: 114, name: "Bitter Gourd (Karela) 500g", category: "Fresh Vegetables", price: 40, image: imageBase + "Bitter_melon.jpg" },
+  { id: 115, name: "Mushroom 200g Pack", category: "Fresh Vegetables", price: 60, image: imageBase + "Agaricus_bisporus.jpg" },
+  { id: 116, name: "Capsicum 500g", category: "Fresh Vegetables", price: 50, image: imageBase + "Capsicum.jpg" },
+  
+  
+  { id: 201, name: "Wheat Atta 5kg", category: "Food Grains", price: 260, image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=300" },
+  { id: 202, name: "Rice (Raw) 1kg", category: "Food Grains", price: 65, image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300" },
+  { id: 205, name: "Multigrain Atta 5kg", category: "Food Grains", price: 310, image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300" },
+  { 
+  id: 206, 
+  name: "Toor Dal 1kg", 
+  category: "Food Grains", 
+  price: 165, 
+  image: "https://commons.wikimedia.org/wiki/Special:FilePath/Split%20pigeon%20peas.jpg"
+},
+
+{ 
+  id: 207, 
+  name: "Moong Dal 1kg", 
+  category: "Food Grains", 
+  price: 135, 
+  image: "https://commons.wikimedia.org/wiki/Special:FilePath/Moong%20dal.jpg"
+}
+  
+
+];
+	
+  /*  const PRODUCTS = [
+      // Fresh Vegetables (17 items)
+      { id: 101, name: "Tomato 1kg", category: "Fresh Vegetables", price: 40, image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=300" },
+      { id: 102, name: "Carrot 500g", category: "Fresh Vegetables", price: 40, image: "https://images.unsplash.com/photo-1598170845058-12ef4a457939?w=300" },
+      { id: 103, name: "Potato 1kg", category: "Fresh Vegetables", price: 35, image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300" },
+      { id: 104, name: "Onion 1kg", category: "Fresh Vegetables", price: 45, image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=300" },
+      { id: 105, name: "Cabbage 1 pc", category: "Fresh Vegetables", price: 30, image: "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=300" },
+      { id: 106, name: "Cauliflower 1 pc", category: "Fresh Vegetables", price: 45, image: "https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?w=300" },
+      { id: 107, name: "Coriander (Kothmir) Bunch", category: "Fresh Vegetables", price: 20, image: "https://images.unsplash.com/photo-1588879460618-924a413d0859?w=300" },
+      { id: 108, name: "Spinach (Palak) Bunch", category: "Fresh Vegetables", price: 25, image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=300" },
+      { id: 109, name: "Methi (Fenugreek) Bunch", category: "Fresh Vegetables", price: 25, image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=300" },
+      { id: 110, name: "Green Chilly 250g", category: "Fresh Vegetables", price: 20, image: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=300" },
+      { id: 111, name: "Lemon 250g", category: "Fresh Vegetables", price: 30, image: "https://images.unsplash.com/photo-1534531141161-e41d133a4d52?w=300" },
+      { id: 112, name: "Curry Leaves Pack", category: "Fresh Vegetables", price: 15, image: "https://images.unsplash.com/photo-1628543108325-236f6d538e1a?w=300" },
+      { id: 113, name: "Brinjal (Eggplant) 500g", category: "Fresh Vegetables", price: 35, image: "https://images.unsplash.com/photo-1628773822503-930a85811776?w=300" },
+      { id: 114, name: "Bitter Gourd (Karela) 500g", category: "Fresh Vegetables", price: 40, image: "https://images.unsplash.com/photo-1610555356070-d0efb6505f81?w=300" },
+      { id: 115, name: "Sponge Gourd (Turai) 500g", category: "Fresh Vegetables", price: 35, image: "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=300" },
+      { id: 116, name: "Mushroom 200g Pack", category: "Fresh Vegetables", price: 60, image: "https://images.unsplash.com/photo-1504470695779-75300268aa0e?w=300" },
+      { id: 117, name: "Capsicum 500g", category: "Fresh Vegetables", price: 50, image: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=300" },
+
+      // Food Grains (11 items)
+      { id: 201, name: "Wheat Atta 5kg", category: "Food Grains", price: 260, image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=300" },
+      { id: 202, name: "Rice (Raw) 1kg", category: "Food Grains", price: 65, image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300" },
+      { id: 203, name: "Jowar Atta 1kg", category: "Food Grains", price: 70, image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300" },
+      { id: 204, name: "Basmati Rice 1kg", category: "Food Grains", price: 140, image: "https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=300" },
+      { id: 205, name: "Multigrain Atta 5kg", category: "Food Grains", price: 310, image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300" },
+      { id: 206, name: "Toor Dal 1kg", category: "Food Grains", price: 165, image: "https://images.unsplash.com/photo-1585996877201-54830e2fe100?w=300" },
+      { id: 207, name: "Moong Dal 1kg", category: "Food Grains", price: 135, image: "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=300" },
+      { id: 208, name: "Whole Moong 1kg", category: "Food Grains", price: 125, image: "https://images.unsplash.com/photo-1613758235210-9b4566373111?w=300" },
+      { id: 209, name: "Rawa (Sooji) 1kg", category: "Food Grains", price: 55, image: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=300" },
+      { id: 210, name: "Besan (Gram Flour) 1kg", category: "Food Grains", price: 90, image: "https://images.unsplash.com/photo-1603569283847-be29b8b3bc36?w=300" },
+      { id: 211, name: "Maida (Refined Flour) 1kg", category: "Food Grains", price: 50, image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300" }
+	  
+	  
+	  
+	  
+	  
+    ];*/
+
+    // State Variables
+    let currentUser = SAMPLE_USERS[0];
+    let currentStore = STORES.find(s => s.id === currentUser.storeId);
     let selectedCategory = "All";
-    let cart = {}; // { productId: quantity }
+    let cart = {};
 
-    // Initialize UI
+    // Init App
     window.onload = () => {
-      initStoreDropdown();
+      initDropdowns();
+      syncStoreToUserLocation();
       renderCategories();
       renderProducts();
+      updateUserOrdersCount();
     };
 
-    function initStoreDropdown() {
-      const select = document.getElementById("pincode-select");
-      STORES.forEach(store => {
-        const option = document.createElement("option");
-        option.value = store.id;
-        option.innerText = `${store.pincode} (${store.name.split('-')[1].trim()})`;
-        select.appendChild(option);
-      });
-      updateStoreHeader();
+    function initDropdowns() {
+      const storeSelect = document.getElementById("pincode-select");
+      storeSelect.innerHTML = STORES.map(s => 
+        `<option value="${s.id}">${s.pincode} - ${s.locality}</option>`
+      ).join('');
+
+      const userSelect = document.getElementById("user-select");
+      userSelect.innerHTML = SAMPLE_USERS.map(u => 
+        `<option value="${u.id}">${u.name} (${u.location})</option>`
+      ).join('');
+    }
+
+    function syncStoreToUserLocation() {
+      const storeSelect = document.getElementById("pincode-select");
+      currentStore = STORES.find(s => s.id === currentUser.storeId);
+      storeSelect.value = currentStore.id;
+    }
+
+    function switchUser() {
+      const selectedUserId = document.getElementById("user-select").value;
+      currentUser = SAMPLE_USERS.find(u => u.id === selectedUserId);
+      syncStoreToUserLocation();
+
+      cart = {};
+      updateCartUI();
+      updateUserOrdersCount();
+      
+      if (!document.getElementById("orders-view").classList.contains("hidden")) {
+        renderOrdersList();
+      }
     }
 
     function changeStore() {
-      const selectedId = parseInt(document.getElementById("pincode-select").value);
-      currentStore = STORES.find(s => s.id === selectedId);
-      updateStoreHeader();
-      // Clear cart on store switch to simulate inventory availability
+      const selectedStoreId = parseInt(document.getElementById("pincode-select").value);
+      currentStore = STORES.find(s => s.id === selectedStoreId);
       cart = {};
       updateCartUI();
-      alert(`Switched to location: ${currentStore.name}. Cart has been reset.`);
-    }
-
-    function updateStoreHeader() {
-      document.getElementById("store-name").innerText = `Serving from: ${currentStore.name}`;
     }
 
     function renderCategories() {
@@ -210,15 +344,14 @@
 
       grid.innerHTML = filtered.map(product => `
         <div class="product-card">
-          <img src="${product.image}" alt="${product.name}">
+          <img src="${product.image}" alt="${product.name}" loading="lazy">
           <div class="product-title">${product.name}</div>
           <div class="product-price">₹${product.price}</div>
-          <button class="add-btn" onclick="addToCart(${product.id})">ADD</button>
+          <button class="add-btn" onclick="addToCart(${product.id})">+ ADD</button>
         </div>
       `).join('');
     }
 
-    // Cart Handlers
     function addToCart(productId) {
       cart[productId] = (cart[productId] || 0) + 1;
       updateCartUI();
@@ -227,38 +360,33 @@
     function updateQuantity(productId, delta) {
       if (cart[productId]) {
         cart[productId] += delta;
-        if (cart[productId] <= 0) {
-          delete cart[productId];
-        }
+        if (cart[productId] <= 0) delete cart[productId];
       }
       updateCartUI();
     }
 
     function updateCartUI() {
       const cartItemsContainer = document.getElementById("cart-items");
-      const totalCountEl = document.getElementById("header-count");
       const totalPriceEl = document.getElementById("cart-total-price");
       const checkoutBtn = document.getElementById("checkout-btn");
 
       const itemIds = Object.keys(cart);
-      let totalCount = 0;
       let totalPrice = 0;
 
       if (itemIds.length === 0) {
-        cartItemsContainer.innerHTML = `<p style="color: #888; font-size: 0.9rem;">Your cart is empty.</p>`;
+        cartItemsContainer.innerHTML = `<p style="color: #888; font-size: 0.85rem;">Your basket is empty.</p>`;
         checkoutBtn.disabled = true;
       } else {
         cartItemsContainer.innerHTML = itemIds.map(id => {
           const product = PRODUCTS.find(p => p.id === parseInt(id));
           const qty = cart[id];
           const itemTotal = product.price * qty;
-          totalCount += qty;
           totalPrice += itemTotal;
 
           return `
             <div class="cart-item">
               <div>
-                <div>${product.name}</div>
+                <div><strong>${product.name}</strong></div>
                 <small style="color:#666">₹${product.price} x ${qty}</small>
               </div>
               <div class="cart-controls">
@@ -269,23 +397,136 @@
             </div>
           `;
         }).join('');
-        
         checkoutBtn.disabled = false;
       }
-
-      totalCountEl.innerText = totalCount;
       totalPriceEl.innerText = totalPrice;
     }
 
     function placeOrder() {
       const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
-      const total = document.getElementById("cart-total-price").innerText;
+      const totalAmount = document.getElementById("cart-total-price").innerText;
 
-      alert(`🎉 Order Placed Successfully!\n\nStore: ${currentStore.name}\nTotal Amount: ₹${total}\nPayment Method: ${selectedPayment}\n\nYour delivery will arrive in 10 minutes!`);
-      
-      // Reset Cart
+      const orderItems = Object.keys(cart).map(id => {
+        const product = PRODUCTS.find(p => p.id === parseInt(id));
+        return {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: cart[id]
+        };
+      });
+
+      const newOrder = {
+        orderId: "MUM-" + Math.floor(100000 + Math.random() * 900000),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        store: currentStore.name,
+        pincode: currentStore.pincode,
+        paymentMode: selectedPayment,
+        total: totalAmount,
+        items: orderItems,
+        timestamp: new Date().toLocaleString("en-IN")
+      };
+
+      let allOrders = JSON.parse(localStorage.getItem("mumbai_app_orders") || "[]");
+      allOrders.unshift(newOrder);
+      localStorage.setItem("mumbai_app_orders", JSON.stringify(allOrders));
+
       cart = {};
       updateCartUI();
+      updateUserOrdersCount();
+
+      renderConfirmationPage(newOrder);
+      showView('confirmation');
+    }
+
+    function renderConfirmationPage(order) {
+      const container = document.getElementById("latest-order-details");
+      container.innerHTML = `
+        <div class="order-card">
+          <div class="order-header">
+            <span>Order #${order.orderId}</span>
+            <span class="order-status">⚡ Out for Express Delivery</span>
+          </div>
+          <p style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">
+            <strong>Customer:</strong> ${order.userName} (${currentUser.phone})<br>
+            <strong>Hub:</strong> ${order.store} (${order.pincode})<br>
+            <strong>Payment:</strong> ${order.paymentMode}
+          </p>
+          <hr style="margin: 8px 0; border: none; border-top: 1px dashed #ddd;">
+          ${order.items.map(item => `
+            <div class="order-item-line">
+              <span>${item.name} x${item.quantity}</span>
+              <span>₹${item.price * item.quantity}</span>
+            </div>
+          `).join('')}
+          <hr style="margin: 8px 0; border: none; border-top: 1px solid #ddd;">
+          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.95rem; margin-top: 5px;">
+            <span>Total Paid:</span>
+            <span>₹${order.total}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function getUserOrders() {
+      const allOrders = JSON.parse(localStorage.getItem("mumbai_app_orders") || "[]");
+      return allOrders.filter(o => o.userId === currentUser.id);
+    }
+
+    function updateUserOrdersCount() {
+      const userOrders = getUserOrders();
+      document.getElementById("user-order-count").innerText = userOrders.length;
+    }
+
+    function renderOrdersList() {
+      const ordersListContainer = document.getElementById("orders-list");
+      const title = document.getElementById("orders-title");
+      title.innerText = `Order History for ${currentUser.name}`;
+
+      const userOrders = getUserOrders();
+
+      if (userOrders.length === 0) {
+        ordersListContainer.innerHTML = `<p style="color: #777;">No orders found for this user yet.</p>`;
+        return;
+      }
+
+      ordersListContainer.innerHTML = userOrders.map(order => `
+        <div class="order-card">
+          <div class="order-header">
+            <span>Order #${order.orderId}</span>
+            <span style="font-size:0.8rem; color:#777;">${order.timestamp}</span>
+          </div>
+          <p style="font-size: 0.85rem; color: #555; margin-bottom: 8px;">
+            <strong>Hub:</strong> ${order.store} | <strong>Payment:</strong> ${order.paymentMode}
+          </p>
+          ${order.items.map(item => `
+            <div class="order-item-line">
+              <span>${item.name} x${item.quantity}</span>
+              <span>₹${item.price * item.quantity}</span>
+            </div>
+          `).join('')}
+          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 6px;">
+            <span>Total Amount:</span>
+            <span>₹${order.total}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showView(viewName) {
+      document.getElementById("shop-view").classList.add("hidden");
+      document.getElementById("confirmation-view").classList.add("hidden");
+      document.getElementById("orders-view").classList.add("hidden");
+
+      if (viewName === 'shop') {
+        document.getElementById("shop-view").classList.remove("hidden");
+      } else if (viewName === 'confirmation') {
+        document.getElementById("confirmation-view").classList.remove("hidden");
+      } else if (viewName === 'orders') {
+        renderOrdersList();
+        document.getElementById("orders-view").classList.remove("hidden");
+      }
     }
   </script>
 </body>
